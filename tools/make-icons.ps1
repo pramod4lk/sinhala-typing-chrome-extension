@@ -1,4 +1,5 @@
-# Regenerates icons/icon{16,32,48,128}.png. Windows PowerShell 5.1 (System.Drawing).
+# Regenerates icons/icon{16,32,48,128}.png (on) and icons/off-{16,32,48,128}.png (grey,
+# shown in the toolbar while typing on pages is paused). Windows PowerShell 5.1 (System.Drawing).
 # Run from the repo root:  powershell -ExecutionPolicy Bypass -File tools/make-icons.ps1
 
 Add-Type -AssemblyName System.Drawing
@@ -7,8 +8,13 @@ $outDir = Join-Path $PSScriptRoot '..\icons'
 New-Item -ItemType Directory -Force $outDir | Out-Null
 
 $glyph = [string][char]0x0D85  # අ
-$bg = [System.Drawing.Color]::FromArgb(255, 138, 21, 56)
+$variants = @(
+    @{ Prefix = 'icon'; Bg = [System.Drawing.Color]::FromArgb(255, 138, 21, 56) },
+    @{ Prefix = 'off-'; Bg = [System.Drawing.Color]::FromArgb(255, 150, 146, 152) }
+)
 
+foreach ($variant in $variants) {
+$bg = $variant.Bg
 foreach ($size in 16, 32, 48, 128) {
     $bmp = New-Object System.Drawing.Bitmap $size, $size
     $g = [System.Drawing.Graphics]::FromImage($bmp)
@@ -38,8 +44,9 @@ foreach ($size in 16, 32, 48, 128) {
     $rect = New-Object System.Drawing.RectangleF 0, ([float]($size * 0.04)), $size, $size
     $g.DrawString($glyph, $font, [System.Drawing.Brushes]::White, $rect, $fmt)
 
-    $file = Join-Path $outDir "icon$size.png"
+    $file = Join-Path $outDir "$($variant.Prefix)$size.png"
     $bmp.Save($file, [System.Drawing.Imaging.ImageFormat]::Png)
     $g.Dispose(); $bmp.Dispose()
     Write-Output "wrote $file"
+}
 }
