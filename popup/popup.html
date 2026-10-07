@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sinhala Typing</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Sinhala Typing</h1>
+    <label class="switch" title="Alt+Shift+S">
+      <input type="checkbox" id="enabled">
+      <span class="slider"></span>
+    </label>
+  </header>
+  <p class="hint">Type Singlish in any text box. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> toggles.</p>
+
+  <section>
+    <h2>Try it</h2>
+    <input id="try" type="text" placeholder="mama gedhara yanavaa" autocomplete="off" spellcheck="false">
+    <div id="try-out" class="si" lang="si"></div>
+  </section>
+
+  <section>
+    <h2>Vowels</h2>
+    <div id="vowels" class="grid"></div>
+    <h2>Consonants</h2>
+    <div id="consonants" class="grid"></div>
+    <h2>Other</h2>
+    <div id="modifiers" class="grid"></div>
+    <p class="hint">Case matters: <code>A</code> ඇ, <code>L</code> ළ, <code>N</code> ණ, <code>T</code> ඨ, <code>D</code> ඪ, <code>R</code> ඍ.
+      <code>kya</code> → ක්‍ය, <code>kra</code> → ක්‍ර.</p>
+  </section>
+
+  <script src="../src/transliterator.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
