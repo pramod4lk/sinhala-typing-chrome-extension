@@ -7,30 +7,35 @@
 </head>
 <body>
   <header>
-    <h1>Sinhala Typing</h1>
-    <label class="switch" title="Alt+Shift+S">
-      <input type="checkbox" id="enabled">
-      <span class="slider"></span>
-    </label>
+    <div class="mark si" lang="si" aria-hidden="true">අ</div>
+    <div class="titles">
+      <h1>Singlish</h1>
+      <p id="status" class="status"><span class="dot"></span><span id="status-text">Typing on pages</span></p>
+    </div>
+    <kbd class="shortcut" title="Turn typing on web pages on or off">Alt+Shift+S</kbd>
   </header>
-  <p class="hint">Type Singlish in any text box. <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> toggles.</p>
 
-  <section>
-    <h2>Try it</h2>
-    <input id="try" type="text" placeholder="mama gedhara yanavaa" autocomplete="off" spellcheck="false">
-    <div id="try-out" class="si" lang="si"></div>
-  </section>
+  <main>
+    <textarea id="src" rows="2" placeholder="mama gedhara yanavaa" autocomplete="off" spellcheck="false" aria-label="Singlish text"></textarea>
 
-  <section>
-    <h2>Vowels</h2>
-    <div id="vowels" class="grid"></div>
-    <h2>Consonants</h2>
-    <div id="consonants" class="grid"></div>
-    <h2>Other</h2>
-    <div id="modifiers" class="grid"></div>
-    <p class="hint">Case matters: <code>A</code> ඇ, <code>L</code> ළ, <code>N</code> ණ, <code>T</code> ඨ, <code>D</code> ඪ, <code>R</code> ඍ.
-      <code>kya</code> → ක්‍ය, <code>kra</code> → ක්‍ර.</p>
-  </section>
+    <div class="out-card">
+      <div id="out" class="out si" lang="si" aria-live="polite"></div>
+      <div class="actions">
+        <button id="clear" class="ghost" type="button" title="Clear">Clear</button>
+        <button id="copy" class="primary" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>
+          <span id="copy-label">Copy</span>
+        </button>
+      </div>
+    </div>
+
+    <details id="keys">
+      <summary>Keys</summary>
+      <div id="vowels" class="grid"></div>
+      <div id="consonants" class="grid"></div>
+      <p class="note">Case matters · <code>kya</code> ක්‍ය · <code>kra</code> ක්‍ර · <code>x</code> ං · <code>H</code> ඃ</p>
+    </details>
+  </main>
 
   <script src="../src/transliterator.js"></script>
   <script src="popup.js"></script>
