@@ -17,10 +17,19 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'sync' && changes.enabled) showStatus(changes.enabled.newValue);
 });
 
+// Size the textarea to its content; CSS max-height caps it.
+function autoGrow() {
+  src.style.height = 'auto';
+  src.style.height = `${src.scrollHeight + 2}px`; // + top/bottom border
+}
+
 function update() {
   const text = transliterate(src.value);
   out.textContent = text;
   copyBtn.disabled = !text.trim();
+  autoGrow();
+  // Once the output hits its max height, keep the end (what's being typed) in view.
+  if (src.selectionEnd === src.value.length) out.scrollTop = out.scrollHeight;
   try { localStorage.setItem(DRAFT_KEY, src.value); } catch {}
 }
 

@@ -82,7 +82,7 @@ It converts **as you type**, word by word.
 
 ## Popup (`popup/`)
 
-A compact converter: type Singlish, then copy the Sinhala with the Copy button or Ctrl+Enter. The draft is kept in `localStorage`, and the "Keys" reference is collapsible. Chrome caps popups at 600px tall and the scrollbar is hidden, so keep the popup under that with "Keys" expanded. It's currently about 570px, with a 9-column key grid.
+A compact converter: type Singlish, then copy the Sinhala with the Copy button or Ctrl+Enter. The draft is kept in `localStorage`, and the "Keys" reference is collapsible. Chrome caps popups at 600px tall and the scrollbar is hidden, so keep the popup under that with "Keys" expanded. It's currently about 570px, with a 9-column key grid. The input and output boxes grow with their text up to CSS max-heights (140px / 260px), which keep the popup at about 585px with "Keys" closed. Past that, the output scrolls and follows the end of the text. If you raise those caps, recheck the 600px limit.
 - `background.js` registers a `commands` entry (suggested `Alt+Shift+S`) that flips `enabled`. The toolbar icon shows the state: colored when on, grey (`icons/off-*.png`) when off. Don't use badge text. It looked like a second icon on the toolbar button, so `updateAction()` clears it.
 
 ## Commands

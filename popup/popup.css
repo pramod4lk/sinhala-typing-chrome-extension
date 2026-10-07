@@ -90,6 +90,8 @@ textarea {
   font: inherit;
   font-size: 13.5px;
   outline: none;
+  overflow-y: auto;
+  max-height: 140px; /* grows with content (see autoGrow in popup.js) up to this */
   transition: border-color .15s, box-shadow .15s;
 }
 textarea::placeholder { color: var(--muted); opacity: .7; }
@@ -105,7 +107,9 @@ textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent
 }
 .out {
   min-height: 30px;
-  max-height: 96px;
+  /* Grows with the text; capped so the popup (with Keys closed) stays under
+     Chrome's 600px limit. Past this it scrolls and follows the newest text. */
+  max-height: 260px;
   overflow-y: auto;
   font-size: 19px;
   line-height: 1.5;
