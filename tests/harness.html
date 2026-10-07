@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>content.js harness</title>
+<input id="inp" type="text" style="width:400px;font-size:20px"><br>
+<textarea id="ta" style="width:400px;font-size:20px"></textarea><br>
+<div id="ce" contenteditable style="width:400px;min-height:30px;border:1px solid #999;font-size:20px"></div>
+<input id="pw" type="password">
+<script>
+  window.chrome = { storage: {
+    sync: { get: (d, cb) => cb(d), set: () => {} },
+    onChanged: { addListener: () => {} },
+  } };
+</script>
+<script src="../src/transliterator.js"></script>
+<script src="../src/content.js"></script>
+<script>
+  // Simulates typing: letters/Backspace go through content.js; anything it
+  // doesn't preventDefault is applied the way the browser would.
+  window.typeInto = (el, keys) => {
+    el.focus();
+    for (const key of keys) {
+      const ev = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+      const notHandled = el.dispatchEvent(ev);
+      if (notHandled) {
+        if (key === 'Backspace') document.execCommand('delete');
+        else if (key.length === 1) document.execCommand('insertText', false, key);
+      }
+    }
+    return el.value ?? el.textContent;
+  };
+  window.inputEvents = 0;
+  document.addEventListener('input', () => window.inputEvents++);
+</script>
