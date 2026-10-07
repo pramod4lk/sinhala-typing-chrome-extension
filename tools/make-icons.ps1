@@ -37,11 +37,31 @@ foreach ($size in 16, 32, 48, 128) {
     if (-not ((New-Object System.Drawing.Text.InstalledFontCollection).Families.Name -contains $fontName)) {
         $fontName = 'Nirmala UI'
     }
+    # Centre the letter on its ink, not the font's line box (which leaves it low and
+    # to the right). DrawString keeps hinting, so the 16px icon stays crisp; we draw
+    # once off-screen, measure where the pixels landed, then draw shifted into place.
     $font = New-Object System.Drawing.Font $fontName, ([float]($size * 0.62)), ([System.Drawing.FontStyle]::Bold), ([System.Drawing.GraphicsUnit]::Pixel)
     $fmt = New-Object System.Drawing.StringFormat
     $fmt.Alignment = 'Center'
     $fmt.LineAlignment = 'Center'
-    $rect = New-Object System.Drawing.RectangleF 0, ([float]($size * 0.04)), $size, $size
+    $probe = New-Object System.Drawing.Bitmap $size, $size
+    $pg = [System.Drawing.Graphics]::FromImage($probe)
+    $pg.TextRenderingHint = 'AntiAliasGridFit'
+    $pg.DrawString($glyph, $font, [System.Drawing.Brushes]::White, (New-Object System.Drawing.RectangleF 0, 0, $size, $size), $fmt)
+    $pg.Dispose()
+    $minX = $size; $minY = $size; $maxX = -1; $maxY = -1
+    for ($y = 0; $y -lt $size; $y++) {
+        for ($x = 0; $x -lt $size; $x++) {
+            if ($probe.GetPixel($x, $y).A -gt 96) {
+                if ($x -lt $minX) { $minX = $x }; if ($x -gt $maxX) { $maxX = $x }
+                if ($y -lt $minY) { $minY = $y }; if ($y -gt $maxY) { $maxY = $y }
+            }
+        }
+    }
+    $probe.Dispose()
+    $dx = [Math]::Round($w / 2 - ($minX + $maxX) / 2)
+    $dy = [Math]::Round($w / 2 - ($minY + $maxY) / 2)
+    $rect = New-Object System.Drawing.RectangleF ([float]$dx), ([float]$dy), $size, $size
     $g.DrawString($glyph, $font, [System.Drawing.Brushes]::White, $rect, $fmt)
 
     $file = Join-Path $outDir "$($variant.Prefix)$size.png"
