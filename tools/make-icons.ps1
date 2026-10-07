@@ -52,7 +52,7 @@ foreach ($size in 16, 32, 48, 128) {
     $minX = $size; $minY = $size; $maxX = -1; $maxY = -1
     for ($y = 0; $y -lt $size; $y++) {
         for ($x = 0; $x -lt $size; $x++) {
-            if ($probe.GetPixel($x, $y).A -gt 96) {
+            if ($probe.GetPixel($x, $y).A -gt 200) {  # solid ink only; faint AA edges skew it
                 if ($x -lt $minX) { $minX = $x }; if ($x -gt $maxX) { $maxX = $x }
                 if ($y -lt $minY) { $minY = $y }; if ($y -gt $maxY) { $maxY = $y }
             }
