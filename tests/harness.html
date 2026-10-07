@@ -11,8 +11,12 @@
     onChanged: { addListener: () => {} },
   } };
 </script>
-<script src="../src/transliterator.js"></script>
-<script src="../src/content.js"></script>
+<script>
+  // Cache-busted so edits show up on a plain reload.
+  for (const f of ['transliterator.js', 'content.js']) {
+    document.write(`<script src="../src/${f}?t=${Date.now()}"><\/script>`);
+  }
+</script>
 <script>
   // Simulates typing: letters/Backspace go through content.js; anything it
   // doesn't preventDefault is applied the way the browser would.

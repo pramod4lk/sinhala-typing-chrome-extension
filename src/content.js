@@ -95,6 +95,18 @@
     return { range, text };
   }
 
+  const SINHALA_OR_ZWJ = /[඀-෿‍]/;
+
+  // True when Sinhala text directly follows the range. Chrome treats e.g. "ක්ම"
+  // as one grapheme cluster and execCommand would widen the edit to swallow ම,
+  // so in that case we must replace the exact code units ourselves.
+  function followedBySinhala(el, where) {
+    if (isTextControl(el)) return SINHALA_OR_ZWJ.test(el.value.charAt(where.end));
+    const { endContainer, endOffset } = where.range;
+    return endContainer.nodeType === Node.TEXT_NODE &&
+      SINHALA_OR_ZWJ.test(endContainer.data.charAt(endOffset));
+  }
+
   // Replaces the located text with `text`. execCommand keeps native undo working
   // and fires the input events that React/Vue/rich-text editors listen for.
   function replace(el, where, text) {
@@ -109,10 +121,12 @@
 
     const hasSelection = isTextControl(el) ? where.start !== where.end : !where.range.collapsed;
     if (!text && !hasSelection) return;
-    const ok = text
-      ? doc.execCommand('insertText', false, text)
-      : doc.execCommand('delete', false);
-    if (ok) return;
+    if (!followedBySinhala(el, where)) {
+      const ok = text
+        ? doc.execCommand('insertText', false, text)
+        : doc.execCommand('delete', false);
+      if (ok) return;
+    }
 
     if (isTextControl(el)) {
       el.setRangeText(text, where.start, where.end, 'end');
@@ -133,9 +147,28 @@
     }));
   }
 
+  // Chrome snaps the caret to grapheme-cluster boundaries, so inserting ක් right
+  // before ම leaves it after the whole "ක්ම" cluster. Put it back at the end
+  // of what we inserted so the next keystroke finds `state.out` before the caret.
+  function restoreCaret(el, where, out) {
+    if (isTextControl(el)) {
+      const pos = where.start + out.length;
+      el.setSelectionRange(pos, pos);
+      return;
+    }
+    const sel = el.ownerDocument.getSelection();
+    if (!out || !sel.rangeCount || !sel.isCollapsed) return;
+    const node = sel.focusNode;
+    const offset = sel.focusOffset;
+    if (node.nodeType !== Node.TEXT_NODE || node.data.slice(offset - out.length, offset) === out) return;
+    const idx = node.data.lastIndexOf(out, offset - out.length);
+    if (idx >= 0) sel.collapse(node, idx + out.length);
+  }
+
   function render(el, where) {
     const out = transliterate(state.buffer);
     replace(el, where, out);
+    restoreCaret(el, where, out);
     state.out = out;
   }
 
